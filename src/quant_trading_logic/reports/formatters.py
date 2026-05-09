@@ -44,9 +44,16 @@ def format_backtest_stats(stats: BacktestStats) -> str:
         f"Backtest Analysis for {stats.ticker}\n"
         f"Total bars: {stats.total_bars}\n"
         f"Buy signals generated: {stats.buy_signals}\n"
+        f"Closed trades: {stats.closed_trades}\n"
         f"Profitable signals: {stats.win_signals}\n"
         f"Loss signals: {stats.loss_signals}\n"
         f"Win rate: {stats.win_rate_percent}%\n"
+        f"Total PnL: ${stats.total_pnl:.2f}\n"
+        f"Ending equity: ${stats.ending_equity:.2f}\n"
+        f"Total return: {stats.total_return_percent}%\n"
+        f"Average trade return: {stats.average_return_percent}%\n"
+        f"Average holding days: {stats.average_holding_days}\n"
+        f"Max drawdown: {stats.max_drawdown_percent}%\n"
         f"Latest signal: {stats.latest_signal} (close: ${stats.latest_close:.2f})"
     )
 

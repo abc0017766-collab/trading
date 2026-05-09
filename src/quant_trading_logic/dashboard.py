@@ -377,14 +377,21 @@ def page_single_signal(account_size, risk_pct, period):
                     with col1:
                         st.metric("Total Bars", stats.total_bars)
                     with col2:
-                        st.metric("Buy Signals", stats.buy_signals)
+                        st.metric("Trades Taken", stats.closed_trades)
                     with col3:
                         st.metric("Win Rate", f"{stats.win_rate_percent:.1f}%")
                     with col4:
-                        st.metric(
-                            "Profitable Signals",
-                            f"{stats.win_signals} / {stats.loss_signals}",
-                        )
+                        st.metric("Total Return", f"{stats.total_return_percent:.1f}%")
+
+                    col1, col2, col3, col4 = st.columns(4)
+                    with col1:
+                        st.metric("Total PnL", format_price(stats.total_pnl))
+                    with col2:
+                        st.metric("Ending Equity", format_price(stats.ending_equity))
+                    with col3:
+                        st.metric("Avg Trade", f"{stats.average_return_percent:.1f}%")
+                    with col4:
+                        st.metric("Max Drawdown", f"{stats.max_drawdown_percent:.1f}%")
 
             except Exception as e:
                 st.error(f"❌ Error analyzing {ticker}: {str(e)}")
@@ -491,8 +498,10 @@ def page_watchlist_scan(account_size, risk_pct, period):
                                 "Signal": result.signal,
                                 "Score": result.composite_score,
                                 "Total Bars": stats.total_bars,
-                                "Buy Signals": stats.buy_signals,
+                                "Trades": stats.closed_trades,
                                 "Win Rate %": f"{stats.win_rate_percent:.1f}%",
+                                "Return %": f"{stats.total_return_percent:.1f}%",
+                                "PnL": f"${stats.total_pnl:.2f}",
                                 "Wins": stats.win_signals,
                                 "Losses": stats.loss_signals,
                             })
@@ -622,13 +631,13 @@ def page_backtest_analysis(period):
                     st.metric("Total Bars", stats.total_bars)
 
                 with col2:
-                    st.metric("Buy Signals Generated", stats.buy_signals)
+                    st.metric("Trades Taken", stats.closed_trades)
 
                 with col3:
                     st.metric("Win Rate", f"{stats.win_rate_percent:.1f}%")
 
                 with col4:
-                    st.metric("Latest Signal", stats.latest_signal)
+                    st.metric("Total Return", f"{stats.total_return_percent:.1f}%")
 
                 # Detailed breakdown
                 st.divider()
@@ -645,19 +654,34 @@ def page_backtest_analysis(period):
                 with col3:
                     st.write(f"**Latest Close**: ${stats.latest_close:.2f}")
 
+                col1, col2, col3 = st.columns(3)
+
+                with col1:
+                    st.write(f"**Total PnL**: {format_price(stats.total_pnl)}")
+
+                with col2:
+                    st.write(f"**Ending Equity**: {format_price(stats.ending_equity)}")
+
+                with col3:
+                    st.write(f"**Average Holding Days**: {stats.average_holding_days}")
+
+                st.write(f"**Max Drawdown**: {stats.max_drawdown_percent:.2f}%")
+
                 # Interpretation
                 st.divider()
                 st.subheader("💡 Interpretation")
 
-                if stats.win_rate_percent >= 60:
+                if stats.win_rate_percent >= 60 and stats.total_return_percent > 0:
                     st.success(
-                        f"✓ Strong signal quality: {stats.win_rate_percent:.1f}% win rate"
+                        f"✓ Strong backtest: {stats.win_rate_percent:.1f}% win rate and {stats.total_return_percent:.1f}% return"
                     )
-                elif stats.win_rate_percent >= 50:
-                    st.info(f"Moderate signal quality: {stats.win_rate_percent:.1f}% win rate")
+                elif stats.win_rate_percent >= 50 and stats.total_return_percent >= 0:
+                    st.info(
+                        f"Moderate backtest: {stats.win_rate_percent:.1f}% win rate and {stats.total_return_percent:.1f}% return"
+                    )
                 else:
                     st.warning(
-                        f"Low signal quality: {stats.win_rate_percent:.1f}% win rate"
+                        f"Weak backtest: {stats.win_rate_percent:.1f}% win rate and {stats.total_return_percent:.1f}% return"
                     )
 
             except Exception as e:
