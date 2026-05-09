@@ -1,24 +1,42 @@
 """Streamlit dashboard for trading signal analysis and management."""
 
+import sys
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from quant_trading_logic.data.fetch import fetch_daily_ohlcv
-from quant_trading_logic.data.fundamentals import fetch_fundamentals
-from quant_trading_logic.signals.strategy import evaluate_signal
-from quant_trading_logic.signals.scanner import scan_watchlist
-from quant_trading_logic.backtest.analyzer import analyze_backtest
-from quant_trading_logic.reports.csv_export import (
-    export_signals_to_csv,
-    export_watchlist_to_csv,
-)
-from quant_trading_logic.backtest.journal import (
-    log_signal_to_journal,
-    get_open_trades,
-)
+try:
+    from quant_trading_logic.data.fetch import fetch_daily_ohlcv
+    from quant_trading_logic.data.fundamentals import fetch_fundamentals
+    from quant_trading_logic.signals.strategy import evaluate_signal
+    from quant_trading_logic.signals.scanner import scan_watchlist
+    from quant_trading_logic.backtest.analyzer import analyze_backtest
+    from quant_trading_logic.reports.csv_export import (
+        export_signals_to_csv,
+        export_watchlist_to_csv,
+    )
+    from quant_trading_logic.backtest.journal import (
+        log_signal_to_journal,
+        get_open_trades,
+    )
+except ModuleNotFoundError:
+    # Streamlit Cloud may run this file directly; ensure src/ is on sys.path.
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from quant_trading_logic.data.fetch import fetch_daily_ohlcv
+    from quant_trading_logic.data.fundamentals import fetch_fundamentals
+    from quant_trading_logic.signals.strategy import evaluate_signal
+    from quant_trading_logic.signals.scanner import scan_watchlist
+    from quant_trading_logic.backtest.analyzer import analyze_backtest
+    from quant_trading_logic.reports.csv_export import (
+        export_signals_to_csv,
+        export_watchlist_to_csv,
+    )
+    from quant_trading_logic.backtest.journal import (
+        log_signal_to_journal,
+        get_open_trades,
+    )
 
 
 # Page config
