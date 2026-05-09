@@ -618,11 +618,25 @@ def page_backtest_analysis(period):
         if st.button("▶️ Run Backtest", use_container_width=True):
             st.session_state.run_backtest = True
 
+    date_col1, date_col2 = st.columns(2)
+    with date_col1:
+        start_date = st.date_input("Start Date", value=None)
+    with date_col2:
+        end_date = st.date_input("End Date", value=None)
+
+    start_date_value = start_date.isoformat() if start_date else None
+    end_date_value = end_date.isoformat() if end_date else None
+
     if ticker and "run_backtest" in st.session_state and st.session_state.run_backtest:
         with st.spinner(f"Running backtest for {ticker}..."):
             try:
                 df = fetch_daily_ohlcv(ticker, period=period)
-                stats = analyze_backtest(ticker, df)
+                stats = analyze_backtest(
+                    ticker,
+                    df,
+                    start_date=start_date_value,
+                    end_date=end_date_value,
+                )
 
                 # Display results
                 col1, col2, col3, col4 = st.columns(4)
@@ -666,6 +680,11 @@ def page_backtest_analysis(period):
                     st.write(f"**Average Holding Days**: {stats.average_holding_days}")
 
                 st.write(f"**Max Drawdown**: {stats.max_drawdown_percent:.2f}%")
+
+                if start_date_value or end_date_value:
+                    st.info(
+                        f"Backtest range: {start_date_value or 'start of data'} to {end_date_value or 'end of data'}"
+                    )
 
                 # Interpretation
                 st.divider()

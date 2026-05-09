@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from datetime import datetime
 
 from quant_trading_logic.data.fetch import fetch_daily_ohlcv
 from quant_trading_logic.data.fundamentals import fetch_fundamentals
@@ -28,9 +29,23 @@ def main() -> None:
     parser.add_argument("--risk-pct", type=float, default=1.0, help="Max risk per trade in percent")
     parser.add_argument("--top", type=int, default=10, help="Top rows for watchlist output")
     parser.add_argument("--backtest", action="store_true", help="Run backtest analysis")
+    parser.add_argument("--start-date", help="Backtest start date in YYYY-MM-DD format")
+    parser.add_argument("--end-date", help="Backtest end date in YYYY-MM-DD format")
     parser.add_argument("--export", help="Export results to CSV file")
     parser.add_argument("--journal", help="Log signal to trade journal CSV file")
     args = parser.parse_args()
+
+    def parse_date(value: str | None) -> datetime | None:
+        if not value:
+            return None
+        try:
+            return datetime.strptime(value, "%Y-%m-%d")
+        except ValueError as exc:
+            parser.error(f"Invalid date '{value}'. Use YYYY-MM-DD.")
+            raise exc
+
+    start_date = parse_date(args.start_date)
+    end_date = parse_date(args.end_date)
 
     if args.watchlist:
         tickers = [t.strip() for t in args.watchlist.split(",") if t.strip()]
@@ -53,7 +68,12 @@ def main() -> None:
             for signal in scan.results[:args.top]:
                 try:
                     df = fetch_daily_ohlcv(signal.ticker, period=args.period)
-                    stats = analyze_backtest(signal.ticker, df)
+                    stats = analyze_backtest(
+                        signal.ticker,
+                        df,
+                        start_date=start_date,
+                        end_date=end_date,
+                    )
                     print("\n" + format_backtest_stats(stats))
                 except Exception as e:
                     print(f"\nBacktest failed for {signal.ticker}: {e}")
@@ -80,7 +100,12 @@ def main() -> None:
 
     if args.backtest:
         print("\n" + "=" * 60)
-        stats = analyze_backtest(args.ticker, df)
+        stats = analyze_backtest(
+            args.ticker,
+            df,
+            start_date=start_date,
+            end_date=end_date,
+        )
         print(format_backtest_stats(stats))
         print("=" * 60)
     

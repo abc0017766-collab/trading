@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime
 import pandas as pd
 
 from quant_trading_logic.signals.strategy import evaluate_signal
@@ -49,6 +50,8 @@ def analyze_backtest(
     risk_per_trade_pct: float = 1.0,
     max_holding_days: int = 20,
     min_history: int = 200,
+    start_date: str | datetime | None = None,
+    end_date: str | datetime | None = None,
 ) -> BacktestStats:
     """Run a walk-forward backtest over historical OHLCV data.
 
@@ -57,6 +60,22 @@ def analyze_backtest(
     period is reached. Only one trade is open at a time.
     """
     total_bars = len(df)
+    if total_bars == 0:
+        raise ValueError("Backtest requires non-empty OHLCV data")
+
+    d = df.copy()
+    if start_date is not None:
+        start_ts = pd.to_datetime(start_date)
+        d = d[d.index >= start_ts]
+    if end_date is not None:
+        end_ts = pd.to_datetime(end_date)
+        d = d[d.index <= end_ts]
+
+    if d.empty:
+        raise ValueError("Backtest date range returned no rows")
+
+    d = d.sort_index()
+    total_bars = len(d)
     if total_bars == 0:
         raise ValueError("Backtest requires non-empty OHLCV data")
 
@@ -73,7 +92,7 @@ def analyze_backtest(
 
     i = start_index
     while i < total_bars - 1:
-        current_df = df.iloc[: i + 1].copy()
+        current_df = d.iloc[: i + 1].copy()
         try:
             signal = evaluate_signal(
                 ticker,
@@ -101,7 +120,7 @@ def analyze_backtest(
 
         last_index = min(total_bars - 1, i + max_holding_days)
         for j in range(i + 1, last_index + 1):
-            bar = df.iloc[j]
+            bar = d.iloc[j]
 
             # Conservative assumption: if both levels are touched intraday,
             # treat the stop as having hit first.
@@ -116,7 +135,7 @@ def analyze_backtest(
 
         if exit_index is None:
             exit_index = last_index
-            exit_price = float(df.iloc[exit_index]["Close"])
+            exit_price = float(d.iloc[exit_index]["Close"])
 
         pnl = (exit_price - signal.buy_price) * signal.suggested_shares
         trade_return_pct = ((exit_price - signal.buy_price) / signal.buy_price) * 100.0
@@ -140,7 +159,7 @@ def analyze_backtest(
     avg_return = sum(trade_returns) / len(trade_returns) if trade_returns else 0.0
     avg_holding_days = sum(holding_days) / len(holding_days) if holding_days else 0.0
     total_return_pct = ((equity - account_size) / account_size * 100.0) if account_size else 0.0
-    latest_signal = evaluate_signal(ticker, df)
+    latest_signal = evaluate_signal(ticker, d)
 
     return BacktestStats(
         ticker=ticker.upper(),
