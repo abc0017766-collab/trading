@@ -1,0 +1,51 @@
+Metadata-Version: 2.4
+Name: quant-trading-logic
+Version: 0.1.0
+Summary: Quantitative trading signal project
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: numpy>=1.26
+Requires-Dist: pandas>=2.2
+Requires-Dist: yfinance>=0.2
+
+# Quant Trading Logic
+
+A Python project to generate stock trading signals with explicit buy/sell levels.
+
+## What it does
+
+- Downloads daily OHLCV data for a selected ticker
+- Computes trend and momentum indicators (MA50, MA200, RSI14, ATR14)
+- Produces a signal with:
+  - Buy/No Buy
+  - Buy price
+  - Sell target
+  - Stop loss
+- Includes a basic backtest summary
+
+## Quick start
+
+1. Create and activate virtual environment
+2. Install dependencies
+3. Run signal command
+
+```bash
+python -m venv .venv
+.venv\\Scripts\\activate
+pip install -r requirements.txt
+python -m quant_trading_logic.cli --ticker AAPL
+```
+
+## Backtest command
+
+```bash
+python -m quant_trading_logic.cli --ticker AAPL --backtest
+```
+
+## Project structure
+
+- `src/quant_trading_logic/data`: market data fetching
+- `src/quant_trading_logic/signals`: indicators and strategy logic
+- `src/quant_trading_logic/risk`: stop/target calculation
+- `src/quant_trading_logic/backtest`: simple signal backtest
+- `src/quant_trading_logic/reports`: result formatting

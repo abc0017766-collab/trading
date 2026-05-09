@@ -1,0 +1,2 @@
+timestamp,ticker,signal,composite_score,technical_score,fundamental_score,last_close,buy_price,sell_target,stop_loss,suggested_shares,max_risk_amount,risk_per_share,trend_ok,momentum_ok,breakout_ok,exit_price,exit_date,pnl,pnl_percent,status
+2026-05-09T03:25:33.119841,AAPL,NO_BUY,48,24,24,293.32,,,,,,,True,False,False,,,,,no_entry

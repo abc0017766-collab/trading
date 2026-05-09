@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug signal (AAPL)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "quant_trading_logic.cli",
+      "args": ["--ticker", "AAPL"],
+      "python": "c:/app/Trading/.venv/Scripts/python.exe",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    }
+  ]
+}

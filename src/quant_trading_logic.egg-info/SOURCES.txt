@@ -1,0 +1,16 @@
+README.md
+pyproject.toml
+src/quant_trading_logic/__init__.py
+src/quant_trading_logic/cli.py
+src/quant_trading_logic.egg-info/PKG-INFO
+src/quant_trading_logic.egg-info/SOURCES.txt
+src/quant_trading_logic.egg-info/dependency_links.txt
+src/quant_trading_logic.egg-info/requires.txt
+src/quant_trading_logic.egg-info/top_level.txt
+src/quant_trading_logic/backtest/engine.py
+src/quant_trading_logic/data/fetch.py
+src/quant_trading_logic/reports/formatters.py
+src/quant_trading_logic/risk/positioning.py
+src/quant_trading_logic/signals/indicators.py
+src/quant_trading_logic/signals/strategy.py
+tests/test_strategy.py

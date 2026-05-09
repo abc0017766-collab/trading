@@ -1,0 +1,17 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run signal (AAPL)",
+			"type": "shell",
+			"command": "c:/app/Trading/.venv/Scripts/python.exe",
+			"args": [
+				"-m",
+				"quant_trading_logic.cli",
+				"--ticker",
+				"AAPL"
+			],
+			"isBackground": false
+		}
+	]
+}

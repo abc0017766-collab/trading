@@ -1,0 +1,2 @@
+timestamp,ticker,signal,composite_score,technical_score,fundamental_score,last_close,buy_price,sell_target,stop_loss,trend_ok,momentum_ok,breakout_ok,rsi14,atr14,suggested_shares,max_risk_amount,risk_per_share
+2026-05-09T03:25:07.894895,AAPL,NO_BUY,48,24,24,293.32,,,,True,False,False,72.94,6.92,,,
